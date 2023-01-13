@@ -1,0 +1,10 @@
+- name: Assign hostname
+  hostname:
+    name: "{{ hostname }}"
+  when: not (ansible_hostname == hostname)
+ 
+- name: Update & upgrade system
+  apt:
+    update_cache: yes
+    upgrade: dist
+    cache_valid_time: 86400
