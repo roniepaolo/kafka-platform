@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  kafka-server:
+    image: 'roniepaolo/kafka:0.1'
+    build:
+      context: ./img-build
+    volumes:
+      - /data/kafka/data:/kafka/data
+      - /data/kafka/logs:/kafka/logs
+    ports:
+      - 9092:9092

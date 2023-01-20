@@ -8,3 +8,14 @@
     update_cache: yes
     upgrade: dist
     cache_valid_time: 86400
+
+- name: Create group for docker
+  group:
+    name: docker
+    state: present
+
+- name: Adding ubuntu user to docker group
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes

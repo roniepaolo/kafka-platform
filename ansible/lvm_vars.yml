@@ -1,9 +1,15 @@
 lvm_groups:
-  - vgname: apps
+  - vgname: ebs
     disks:
       - /dev/xvdh
     create: true
     lvnames:
+      - lvname: data
+        size: 8G
+        create: true
+        filesystem: ext4
+        mount: true
+        mntp: "{{ data_dir }}"
       - lvname: opt
         size: 100%FREE
         create: true

@@ -29,6 +29,10 @@ WORKDIR $KAFKA_HOME
 
 EXPOSE 9092
 
-COPY ./docker-entrypoint.sh /
+COPY ./log4j.properties /kafka/config
+COPY ./server.properties /kafka/config/kraft
+COPY --chown=kafka:kafka ./docker-entrypoint.sh /
+
+RUN chmod +x /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
