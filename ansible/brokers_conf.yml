@@ -8,7 +8,7 @@
     - lvm_vars.yml
     - kafka_vars.yml
   roles:
-    #- init
-    #- mrlesmithjr.manage-lvm
-    #- geerlingguy.docker
+    - init
+    - mrlesmithjr.manage-lvm
+    - geerlingguy.docker
     - deploy
