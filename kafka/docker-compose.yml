@@ -12,3 +12,4 @@ services:
       - ./img-build/log4j.properties:/kafka/config/log4j.properties
     ports:
       - 9092:9092
+      - 9093:9093

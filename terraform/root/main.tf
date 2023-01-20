@@ -69,7 +69,7 @@ module "auth" {
 # Creating EC2 instance
 module "ec2" {
   source        = "../ec2"
-  instance_type = "t2.micro"
+  instance_type = "t3a.medium"
   ami           = data.aws_ami.ami.id
   az            = "us-east-1a"
   key_name      = module.auth.key_pair_id
