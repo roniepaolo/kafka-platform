@@ -1,2 +1,4 @@
-[prod]
+[brokers]
 gen1 hostname=gen1 node_id=1
+gen2 hostname=gen2 node_id=2
+gen3 hostname=gen3 node_id=3

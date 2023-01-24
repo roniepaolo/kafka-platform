@@ -1,4 +1,4 @@
-- hosts: prod
+- hosts: brokers
   become: yes
   vars:
     manage_lvm: true

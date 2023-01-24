@@ -1,7 +1,7 @@
 lvm_groups:
   - vgname: ebs
     disks:
-      - /dev/xvdh
+      - /dev/nvme1n1
     create: true
     lvnames:
       - lvname: data

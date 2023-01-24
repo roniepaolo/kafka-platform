@@ -1,7 +1,7 @@
 # Creating VPC
 module "vpc" {
   source        = "../vpc"
-  ip            = "10.0.0.0/16"
+  ip            = "172.31.0.0/16"
   dns_support   = true
   dns_hostnames = true
   tag_name      = "prod"
@@ -11,7 +11,7 @@ module "vpc" {
 module "subnet" {
   source    = "../subnet"
   vpc_id    = module.vpc.vpc_id
-  ip        = "10.0.1.0/24"
+  ip        = "172.31.1.0/24"
   public_ip = true
   az        = "us-east-1a"
   tag_name  = "prod-1"
@@ -46,17 +46,38 @@ resource "aws_route_table_association" "public_assoc" {
 }
 
 # Creating Security Group with default rules
-module "security_group" {
-  source                    = "../sg"
-  name                      = "allow_list_sg"
-  description               = "Allow list of IPs who can enter server"
-  vpc_id                    = module.vpc.vpc_id
-  ingress_desc_default      = "SSH connection"
-  ingress_from_port_default = 22
-  ingress_to_port_default   = 22
-  ingress_protocol_default  = "tcp"
-  ingress_ipsv4_default     = ["0.0.0.0/0"]
-  tag_name                  = "allow_list_sg"
+resource "aws_security_group" "security_group" {
+  name        = "allow_list_sg"
+  description = "Allow list of IPs who can enter server"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "SSH connection"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Kafka brokers"
+    from_port   = 9092
+    to_port     = 9093
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  
+  tags = {
+    Name = "allow_list_sg"
+  }
 }
 
 # Creating Key Pair
@@ -68,27 +89,30 @@ module "auth" {
 
 # Creating EC2 instance
 module "ec2" {
+  count         = 3
   source        = "../ec2"
   instance_type = "t3a.medium"
   ami           = data.aws_ami.ami.id
   az            = "us-east-1a"
   key_name      = module.auth.key_pair_id
-  sgs           = [module.security_group.sg_id]
+  sgs           = [aws_security_group.security_group.id]
   subnet_id     = module.subnet.subnet_id
-  tag_name      = "gen1"
+  tag_name      = "gen${count.index + 1}"
 }
 
 # Creating EBS for EC2
 module "ebs" {
+  count    = 3
   source   = "../ebs"
   az       = "us-east-1a"
   size     = 10
-  tag_name = "gen1"
+  tag_name = "gen${count.index + 1}"
 }
 
 # Attaching EBS to EC2
 resource "aws_volume_attachment" "ebs_att" {
+  count       = 3
   device_name = "/dev/sdh"
-  volume_id   = module.ebs.ebs_id
-  instance_id = module.ec2.ec2_id
+  volume_id   = module.ebs.*.ebs_id[count.index]
+  instance_id = module.ec2.*.ec2_id[count.index]
 }
