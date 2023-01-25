@@ -4,6 +4,16 @@
     manage_lvm: true
     apps_dir: "/opt"
     data_dir: "/data"
+    nodes_id: "{{ groups['brokers']
+      | map('extract', hostvars, 'node_id')
+      | list }}"
+    nodes_ip: "{{ groups['brokers'] 
+      | map('extract', hostvars, ['ansible_default_ipv4', 'address'])
+      | list }}"
+    kafka_controllers: "{{ nodes_id
+      | zip(nodes_ip)
+      | map('join', '@')
+      | join(':9093,') }}:9093"
   vars_files:
     - lvm_vars.yml
     - kafka_vars.yml

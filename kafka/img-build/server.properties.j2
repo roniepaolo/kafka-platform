@@ -29,7 +29,7 @@ node.id={{ node_id }}
 
 # The connect string for the controller quorum
 #controller.quorum.voters=1@localhost:9093
-controller.quorum.voters={{ node_id }}@{{ ansible_default_ipv4.address }}:9093
+controller.quorum.voters={{ kafka_controllers }}
 
 ############################# Socket Server Settings #############################
 

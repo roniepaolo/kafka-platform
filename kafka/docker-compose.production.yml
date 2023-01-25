@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+  kafka-server:
+    restart: unless-stopped
+    environment:
+      LOG_LEVEL: WARN
