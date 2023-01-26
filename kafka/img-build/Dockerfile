@@ -31,6 +31,7 @@ EXPOSE 9092
 
 COPY ./log4j.properties /kafka/config
 COPY ./server.properties /kafka/config/kraft
+COPY --chown=kafka:kafka ./cluster_id.txt /
 COPY --chown=kafka:kafka ./docker-entrypoint.sh /
 
 RUN chmod +x /docker-entrypoint.sh
