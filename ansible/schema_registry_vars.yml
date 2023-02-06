@@ -1,0 +1,6 @@
+app_src: "../schema-registry"
+
+app_dir: "/opt/schema-registry"
+build_dir: "/opt/schema-registry/img-build"
+storage_dir: "/data/schema-registry"
+log_dir: "/data/schema-registry/logs"

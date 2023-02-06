@@ -1,0 +1,19 @@
+- hosts: brokers
+
+- hosts: schema_registry
+  become: yes
+  vars:
+    manage_lvm: true
+    apps_dir: "/opt"
+    data_dir: "/data"
+    kafka_servers: "{{ groups['brokers'] 
+      | map('extract', hostvars, ['ansible_default_ipv4', 'address'])
+      | join(':9092,') }}:9092"
+  vars_files:
+    - lvm_vars.yml
+    - schema_registry_vars.yml
+  roles:
+    - init
+    - mrlesmithjr.manage-lvm
+    - geerlingguy.docker
+    - deploy-schema-registry

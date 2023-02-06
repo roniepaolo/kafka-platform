@@ -46,9 +46,9 @@ resource "aws_route_table_association" "public_assoc" {
 }
 
 # Creating Security Group with default rules
-resource "aws_security_group" "security_group" {
-  name        = "allow_list_sg"
-  description = "Allow list of IPs who can enter server"
+resource "aws_security_group" "security_group_in_out" {
+  name        = "allow_list_in_out"
+  description = "Allow list of IPs for connection in and out purpose"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
@@ -57,14 +57,6 @@ resource "aws_security_group" "security_group" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Kafka brokers"
-    from_port   = 9092
-    to_port     = 9093
-    protocol    = "tcp"
-    cidr_blocks = ["172.31.1.0/24"]
   }
 
   egress {
@@ -76,7 +68,77 @@ resource "aws_security_group" "security_group" {
   }
   
   tags = {
-    Name = "allow_list_sg"
+    Name = "allow_list_in_out"
+  }
+}
+
+resource "aws_security_group" "security_group_kafka" {
+  name        = "allow_list_kafka"
+  description = "Allow list of IPs for Kafka"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Kafka brokers"
+    from_port   = 9092
+    to_port     = 9093
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
+  tags = {
+    Name = "allow_list_kafka"
+  }
+}
+
+resource "aws_security_group" "security_group_spc1" {
+  name        = "allow_list_spc1"
+  description = "Allow list of IPs for spc1"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Schema Registry"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
+  ingress {
+    description = "Kafka Connect"
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
+  tags = {
+    Name = "allow_list_spc1"
+  }
+}
+
+resource "aws_security_group" "security_group_spc2" {
+  name        = "allow_list_spc2"
+  description = "Allow list of IPs for spc2"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Kafka Connect"
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
+  ingress {
+    description = "Postgres"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
+  tags = {
+    Name = "allow_list_spc2"
   }
 }
 
@@ -88,20 +150,20 @@ module "auth" {
 }
 
 # Creating EC2 instance
-module "ec2" {
+module "ec2_kafka" {
   count         = 3
   source        = "../ec2"
   instance_type = "t3a.medium"
   ami           = data.aws_ami.ami.id
   az            = "us-east-1a"
   key_name      = module.auth.key_pair_id
-  sgs           = [aws_security_group.security_group.id]
+  sgs           = [aws_security_group.security_group_in_out.id, aws_security_group.security_group_kafka.id]
   subnet_id     = module.subnet.subnet_id
   tag_name      = "gen${count.index + 1}"
 }
 
 # Creating EBS for EC2
-module "ebs" {
+module "ebs_kafka" {
   count    = 3
   source   = "../ebs"
   az       = "us-east-1a"
@@ -109,10 +171,57 @@ module "ebs" {
   tag_name = "gen${count.index + 1}"
 }
 
+# Creating EC2 instance
+module "ec2_spc1" {
+  source        = "../ec2"
+  instance_type = "t3a.medium"
+  ami           = data.aws_ami.ami.id
+  az            = "us-east-1a"
+  key_name      = module.auth.key_pair_id
+  sgs           = [aws_security_group.security_group_in_out.id, aws_security_group.security_group_spc1.id]
+  subnet_id     = module.subnet.subnet_id
+  tag_name      = "spc1"
+}
+
+# Creating EC2 instance
+module "ec2_spc2" {
+  source        = "../ec2"
+  instance_type = "t3a.medium"
+  ami           = data.aws_ami.ami.id
+  az            = "us-east-1a"
+  key_name      = module.auth.key_pair_id
+  sgs           = [aws_security_group.security_group_in_out.id, aws_security_group.security_group_spc2.id]
+  subnet_id     = module.subnet.subnet_id
+  tag_name      = "spc2"
+}
+
+# Creating EBS for EC2
+module "ebs_spc" {
+  count    = 2
+  source   = "../ebs"
+  az       = "us-east-1a"
+  size     = 10
+  tag_name = "spc${count.index + 1}"
+}
+
 # Attaching EBS to EC2
-resource "aws_volume_attachment" "ebs_att" {
+resource "aws_volume_attachment" "ebs_att_kafka" {
   count       = 3
   device_name = "/dev/sdh"
-  volume_id   = module.ebs.*.ebs_id[count.index]
-  instance_id = module.ec2.*.ec2_id[count.index]
+  volume_id   = module.ebs_kafka.*.ebs_id[count.index]
+  instance_id = module.ec2_kafka.*.ec2_id[count.index]
+}
+
+# Attaching EBS to EC2
+resource "aws_volume_attachment" "ebs_att_spc1" {
+  device_name = "/dev/sdh"
+  volume_id   = module.ebs_spc.*.ebs_id[0]
+  instance_id = module.ec2_spc1.ec2_id
+}
+
+# Attaching EBS to EC2
+resource "aws_volume_attachment" "ebs_att_spc2" {
+  device_name = "/dev/sdh"
+  volume_id   = module.ebs_spc.*.ebs_id[1]
+  instance_id = module.ec2_spc2.ec2_id
 }
