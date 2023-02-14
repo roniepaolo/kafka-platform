@@ -6,6 +6,8 @@ gen3 hostname=gen3 node_id=3
 [schema_registry]
 spc1 hostname=spc1
 
-[connects]
+[producer]
 spc1 hostname=spc1
+
+[consumer]
 spc2 hostname=spc2

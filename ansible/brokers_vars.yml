@@ -1,8 +1,10 @@
 app_src: "../kafka"
 build_src: "../kafka/img-build"
+config_src: "../kafka/config"
 
 app_dir: "/opt/kafka"
 build_dir: "/opt/kafka/img-build"
 storage_dir: "/data/kafka"
 data_dir: "/data/kafka/data"
 log_dir: "/data/kafka/logs"
+config_dir: "/opt/kafka/config"

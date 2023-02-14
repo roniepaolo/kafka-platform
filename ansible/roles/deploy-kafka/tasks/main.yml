@@ -32,29 +32,15 @@
 - name: Push Kafka deployment files (templates)
   template:
     src: "{{ item }}"
-    dest: "{{ build_dir }}/{{ item | basename | regex_replace('.j2$', '') }}"
+    dest: "{{ app_dir }}/{{ item | basename | regex_replace('.j2$', '') }}"
     owner: ubuntu
     group: ubuntu
   with_fileglob:
-    - "{{ build_src }}/*.j2"
+    - "{{ app_src }}/*.j2"
 
-
-- name: Find Kafka deployment files (docker-compose)
-  become: yes
-  find:
-    paths: "{{ app_src }}"
-    hidden: yes
-    use_regex: yes
-    patterns: .*\.(yml|yaml)$
-  delegate_to: localhost
-  register: dc_files
-
-- name: Push Kafka deployment files (docker-compose)
+- name: Push Kafka config directory
   copy:
-    src: "{{ item.path }}"
+    src: "{{ config_src }}"
     dest: "{{ app_dir }}"
-    owner: ubuntu
-    group: ubuntu
-  with_items:
-    - "{{ dc_files.files }}"
-
+    owner: 1001
+    group: 1001

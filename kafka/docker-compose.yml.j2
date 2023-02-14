@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  kafka-server:
+    restart: unless-stopped
+    image: 'roniepaolo/kafka:3.3.2'
+    build:
+      context: ./img-build
+    volumes:
+      - /data/kafka/data:/kafka/data
+      - /data/kafka/logs:/kafka/logs
+      - /opt/kafka/config:/kafka/config
+    ports:
+      - 9092:9092
+      - 9093:9093
+    environment:
+      CLUSTER_ID: '{{ cluster_id }}'
+      NODE_ID: '{{ node_id }}'
+      NODE_ROLE: 'combined'
+      LOG_LEVEL: 'INFO'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '{{ kafka_controllers }}'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'CLOUD'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CLOUD:PLAINTEXT,CONTROLLER:PLAINTEXT'
+      KAFKA_LISTENERS: 'CLOUD://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
+      KAFKA_ADVERTISED_LISTENERS: 'CLOUD://{{ ansible_default_ipv4.address }}:9092'
+      KAFKA_LOG_RETENTION_HOURS: '168'
