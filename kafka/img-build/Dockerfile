@@ -5,9 +5,11 @@ ENV KAFKA_VERSION=3.3.2 \
     KAFKA_HOME=/kafka \
     KAFKA_DATA=/kafka/data
 
+USER root
+
 RUN set -eux; \
     \
-    apk add --no-cache --upgrade curl bash; \
+    apk add --no-cache --upgrade curl bash findutils; \
     addgroup -g 1001 -S kafka; \
     adduser -G kafka -u 1001 -s /bin/bash -h $KAFKA_HOME -S -D kafka; \
     chmod 755 $KAFKA_HOME; \

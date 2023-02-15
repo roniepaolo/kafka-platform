@@ -9,26 +9,22 @@
     - "{{ storage_dir }}"
     - "{{ data_dir }}"
     - "{{ log_dir }}"
-    - "{{ config_dir }}"
+    - "{{ build_dir }}/kafka"
+    - "{{ build_dir }}/connect"
 
-- name: Find deployment files
-  become: yes
-  find:
-    paths: "{{ build_src }}"
-    hidden: yes
-    use_regex: yes
-    excludes: .*j2$
-  delegate_to: localhost
-  register: target_files
-
-- name: Push deployment files
+- name: Push Kafka deployment files
   copy:
-    src: "{{ item.path }}"
-    dest: "{{ build_dir }}/"
+    src: "{{ build_kafka_src }}/"
+    dest: "{{ build_dir }}/kafka/"
     owner: ubuntu
     group: ubuntu
-  with_items:
-    - "{{ target_files.files }}"
+
+- name: Push Connect deployment files
+  copy:
+    src: "{{ build_connect_src }}/"
+    dest: "{{ build_dir }}/connect/"
+    owner: ubuntu
+    group: ubuntu
 
 - name: Push deployment files (templates)
   template:

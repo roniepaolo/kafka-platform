@@ -11,9 +11,9 @@
       | join(':9092,') }}:9092"
   vars_files:
     - lvm_vars.yml
-    - schema_registry_vars.yml
+    - sr_vars.yml
   roles:
     - init
     - mrlesmithjr.manage-lvm
     - geerlingguy.docker
-    - deploy-schema-registry
+    - deploy-sr

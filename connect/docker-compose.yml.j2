@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+  kafka-base:
+    image: 'roniepaolo/kafka:3.3.2'
+    build:
+      context: ./img-build/kafka
+    entrypoint: 'true'
+
+  connect:
+    restart: unless-stopped
+    image: 'roniepaolo/connect:3.3.2'
+    build:
+      context: ./img-build/connect
+      args:
+        KAFKA_IMAGE: 'roniepaolo/kafka:3.3.2'
+    ports:
+      - 8083:8083
+    environment:
+      GROUP_ID: '{{ group_id }}'
+      CONFIG_STORAGE_TOPIC: '{{ topic_prefix }}_configs'
+      OFFSET_STORAGE_TOPIC: '{{ topic_prefix }}_offsets'
+      STATUS_STORAGE_TOPIC: '{{ topic_prefix }}_statuses'
+      BOOTSTRAP_SERVERS: '{{ kafka_servers }}'
+      KEY_CONVERTER: 'io.confluent.connect.avro.AvroConverter'
+      VALUE_CONVERTER: 'io.confluent.connect.avro.AvroConverter'
+      LOG_LEVEL: 'INFO'
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_MAX_REQUEST_SIZE: '2097152'
+      CONNECT_CONNECTOR_CLIENT_CONFIG_OVERRIDE_POLICY: 'All'
+      CONNECT_CONFIG_PROVIDERS: 'file'
+      CONNECT_CONFIG_PROVIDERS_FILE_CLASS: 'org.apache.kafka.common.config.provider.FileConfigProvider'
+    extra_hosts:
+      - "schema-registry:{{ schema_registry }}"
+

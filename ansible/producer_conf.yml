@@ -1,0 +1,24 @@
+- hosts: brokers, schema_registry
+
+- hosts: producer
+  become: yes
+  vars:
+    manage_lvm: true
+    apps_dir: "/opt"
+    data_dir: "/data"
+    group_id: "1"
+    topic_prefix: "cp"
+    kafka_servers: "{{ groups['brokers']
+    | map('extract', hostvars, ['ansible_default_ipv4', 'address'])
+    | join(':9092,') }}:9092"
+    schema_registry: "{{ groups['schema_registry']
+    | map('extract', hostvars, ['ansible_default_ipv4', 'address'])
+    | join(',') }}"
+  vars_files:
+    - lvm_vars.yml
+    - connect_vars.yml
+  roles:
+    #- init
+    #- mrlesmithjr.manage-lvm
+    #- geerlingguy.docker
+    - deploy-connect
