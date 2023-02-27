@@ -16,6 +16,8 @@ services:
         KAFKA_IMAGE: 'roniepaolo/kafka:3.3.2'
     ports:
       - 8083:8083
+    volumes:
+      - ./.secrets:/secrets
     environment:
       GROUP_ID: '{{ group_id }}'
       CONFIG_STORAGE_TOPIC: '{{ topic_prefix }}_configs'
