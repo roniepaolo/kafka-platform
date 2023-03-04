@@ -7,7 +7,7 @@
   loop:
     - "{{ app_dir }}"
     - "{{ storage_dir }}"
-    - "{{ data_dir }}"
+    - "{{ connect_data_dir }}"
     - "{{ log_dir }}"
     - "{{ build_dir }}/kafka"
     - "{{ build_dir }}/connect"

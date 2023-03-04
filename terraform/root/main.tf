@@ -111,6 +111,14 @@ resource "aws_security_group" "security_group_spc1" {
     cidr_blocks = ["172.31.1.0/24"]
   }
 
+  ingress {
+    description = "Bento"
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
   tags = {
     Name = "allow_list_spc1"
   }
@@ -133,6 +141,14 @@ resource "aws_security_group" "security_group_spc2" {
     description = "Postgres"
     from_port   = 5432
     to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.1.0/24"]
+  }
+
+  ingress {
+    description = "Back and front"
+    from_port   = 4000
+    to_port     = 4001
     protocol    = "tcp"
     cidr_blocks = ["172.31.1.0/24"]
   }
