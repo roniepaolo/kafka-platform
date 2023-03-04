@@ -12,6 +12,7 @@
     - "{{ build_dir }}/kafka"
     - "{{ build_dir }}/connect"
     - "{{ secrets_dir }}"
+    - "{{ docker_data_dir }}"
 
 - name: Push Kafka deployment files
   copy:

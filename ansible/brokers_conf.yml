@@ -15,6 +15,8 @@
       | zip(node_ips)
       | map('join', '@')
       | join(':9093,') }}:9093"
+    docker_daemon_options:
+      data-root: '/data/docker'
   vars_files:
     - lvm_vars.yml
     - brokers_vars.yml

@@ -8,6 +8,7 @@
     - "{{ app_dir }}"
     - "{{ storage_dir }}"
     - "{{ log_dir }}"
+    - "{{ docker_data_dir }}"
 
 - name: Push Schema Registry deployment files (templates)
   template:

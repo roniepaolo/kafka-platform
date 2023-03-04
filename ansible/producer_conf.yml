@@ -14,11 +14,13 @@
     schema_registry: "{{ groups['schema_registry']
     | map('extract', hostvars, ['ansible_default_ipv4', 'address'])
     | join(',') }}"
+    docker_daemon_options:
+      data-root: '/data/docker'
   vars_files:
     - lvm_vars.yml
     - connect_vars.yml
   roles:
-    #- init
-    #- mrlesmithjr.manage-lvm
-    #- geerlingguy.docker
+    - init
+    - mrlesmithjr.manage-lvm
+    - geerlingguy.docker
     - deploy-connect

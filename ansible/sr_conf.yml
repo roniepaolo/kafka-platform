@@ -9,6 +9,8 @@
     kafka_servers: "{{ groups['brokers'] 
       | map('extract', hostvars, ['ansible_default_ipv4', 'address'])
       | join(':9092,') }}:9092"
+    docker_daemon_options:
+      data-root: '/data/docker'
   vars_files:
     - lvm_vars.yml
     - sr_vars.yml
