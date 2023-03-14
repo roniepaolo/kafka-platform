@@ -19,3 +19,12 @@
     name: ubuntu
     groups: docker
     append: yes
+
+- name: Create a directory if it does not exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+  loop:
+    - "{{ docker_data_dir }}"

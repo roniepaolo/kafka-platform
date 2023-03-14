@@ -10,7 +10,6 @@
     - "{{ kafka_data_dir }}"
     - "{{ log_dir }}"
     - "{{ config_dir }}"
-    - "{{ docker_data_dir }}"
 
 - name: Find deployment files
   become: yes

@@ -105,8 +105,8 @@ resource "aws_security_group" "security_group_spc1" {
 
   ingress {
     description = "Kafka Connect"
-    from_port   = 8082
-    to_port     = 8082
+    from_port   = 8083
+    to_port     = 8083
     protocol    = "tcp"
     cidr_blocks = ["172.31.1.0/24"]
   }
@@ -131,8 +131,8 @@ resource "aws_security_group" "security_group_spc2" {
 
   ingress {
     description = "Kafka Connect"
-    from_port   = 8082
-    to_port     = 8082
+    from_port   = 8083
+    to_port     = 8083
     protocol    = "tcp"
     cidr_blocks = ["172.31.1.0/24"]
   }
@@ -146,11 +146,19 @@ resource "aws_security_group" "security_group_spc2" {
   }
 
   ingress {
-    description = "Back and front"
-    from_port   = 4000
-    to_port     = 4001
+    description = "Full-stack http"
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["172.31.1.0/24"]
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Full-stack https"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {

@@ -6,6 +6,7 @@
     manage_lvm: true
     apps_dir: "/opt"
     data_dir: "/data"
+    docker_data_dir: "/data/docker"
     group_id: "1"
     topic_prefix: "cp"
     kafka_servers: "{{ groups['brokers']
