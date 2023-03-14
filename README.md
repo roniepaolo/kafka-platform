@@ -1,2 +1,25 @@
-# Kafka (KRaft) using Terraform, Ansible and Docker
-Kafka 3.3.2 in Kraft mode running in an Alpine image, that works with a cluster of 3 nodes, 1 schema registry, 1 producer and 1 consumer.
+
+# Kafka Cluster 3.3.x in KRaft Mode
+
+This project is a deployment of a Kafka Cluster, Kafka Connect and Schema Registry using Terraform and Ansible.
+
+
+## Features
+
+- 3 Brokers
+- 1 Producer
+- 1 Consumer
+- 1 Schema Registry
+
+
+## Authors
+
+- [@roniepaolo](https://www.github.com/roniepaolo)
+
+
+## Demo
+
+This project is part of another one available in my repository. Its functionality is proven in the link below.
+
+https://mlstreaming-test.roniepaolo.com/
+
