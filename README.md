@@ -1,7 +1,7 @@
 
 # Kafka Cluster 3.3.x in KRaft Mode
 
-This project is a deployment of a Kafka Cluster, Kafka Connect and Schema Registry using Terraform and Ansible.
+This project is a deployment of a Kafka Cluster, Kafka Connect and Schema Registry using Terraform, Ansible and Docker.
 
 
 ## Features
