@@ -21,5 +21,5 @@ This project is a deployment of a Kafka Cluster, Kafka Connect and Schema Regist
 
 This project is part of another one available in my repository. Its functionality is proven in the link below.
 
-https://mlstreaming-test.roniepaolo.com/
+https://mls.roniepaolo.com/
 
